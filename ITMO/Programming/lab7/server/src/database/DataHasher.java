@@ -1,0 +1,25 @@
+package database;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class DataHasher {
+
+    public static String encryptString(String string) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(string.getBytes(StandardCharsets.UTF_8));
+            BigInteger numRepresentation = new BigInteger(1, digest);
+            String hashedString = numRepresentation.toString(16);
+            while (hashedString.length() < 32) {
+                hashedString = "0" + hashedString;
+            }
+            return hashedString;
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("No such algorithm.");
+        }
+        return null;
+    }
+}

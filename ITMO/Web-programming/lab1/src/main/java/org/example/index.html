@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab1</title>
+    <link rel="stylesheet" href="../../../../../../../web2_zapas/src/main/webapp/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="info-background">
+    <div class="info">
+        <h1>Карагодина Ксения Андреевна - 412958</h1>
+        <h2>Веб-программирование 1.10 (Р3215), вариант 412958</h2>
+    </div>
+</div>
+
+<div class="gif-background"></div>
+
+<!-- Основной контейнер для графика и формы -->
+<div class="container">
+    <table class="plot-container">
+        <tr>
+            <td class="left">
+                <section class="block plot-section">
+                    <div class="graph-background">
+                        <div class="graph">
+                            <svg height="300" width="300" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Оси со стрелками -->
+                                <line stroke="gray" x1="0" x2="300" y1="150" y2="150"></line>
+                                <line stroke="gray" x1="150" x2="150" y1="0" y2="300"></line>
+                                <polygon fill="white" points="150,0 144,15 156,15" stroke="white"></polygon>
+                                <polygon fill="white" points="300,150 285,156 285,144" stroke="white"></polygon>
+
+                                <!-- Засечки -->
+                                <line stroke="gray" x1="200" x2="200" y1="155" y2="145"></line>
+                                <line stroke="gray" x1="250" x2="250" y1="155" y2="145"></line>
+                                <line stroke="gray" x1="50" x2="50" y1="155" y2="145"></line>
+                                <line stroke="gray" x1="100" x2="100" y1="155" y2="145"></line>
+                                <line stroke="gray" x1="145" x2="155" y1="100" y2="100"></line>
+                                <line stroke="gray" x1="145" x2="155" y1="50" y2="50"></line>
+                                <line stroke="gray" x1="145" x2="155" y1="200" y2="200"></line>
+                                <line stroke="gray" x1="145" x2="155" y1="250" y2="250"></line>
+
+                                <!-- Подписи к засечкам -->
+                                <text fill="white" x="195" y="140">R/2</text>
+                                <text fill="white" x="248" y="140">R</text>
+                                <text fill="white" x="40" y="140">-R</text>
+                                <text fill="white" x="90" y="140">-R/2</text>
+                                <text fill="white" x="160" y="105">R/2</text>
+                                <text fill="white" x="160" y="55">R</text>
+                                <text fill="white" x="160" y="205">-R/2</text>
+                                <text fill="white" x="160" y="255">-R</text>
+                                <text fill="white" x="160" y="10">Y</text>
+                                <text fill="white" x="290" y="140">X</text>
+
+                                <!-- Прямоугольник -->
+                                <rect x="150" y="150" width="100" height="50" fill="white" fill-opacity="0.2" stroke="white"></rect>
+
+                                <!-- Треугольник -->
+                                <polygon fill="white" fill-opacity="0.2" points="100,150 150,250 150,150" stroke="white"></polygon>
+
+                                <!-- Четверть круга -->
+                                <path d="M 250 150 A 100, 100, 0, 0, 0, 150 50 L 150 150 Z" fill-opacity="0.2" fill="white" stroke="white"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </section>
+            </td>
+            <td class="right">
+                <h2 class="input">Введите X</h2>
+                <input type="number" step="any" min="-3" max="3" id="inputX">
+
+                <h2 class="input">Выберите Y</h2>
+                <div id="radios">
+                    <label>
+                        <input type="radio" name="radioY" value="-3" checked="checked"> -3
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="-2"> -2
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="-1"> -1
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="0"> 0
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="1"> 1
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="2"> 2
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="3"> 3
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="4"> 4
+                    </label><br>
+                    <label>
+                        <input type="radio" name="radioY" value="5"> 5
+                    </label><br>
+                </div>
+
+                <h2 class="input">Выберите R</h2>
+                <select id="selectR">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+
+                <div>
+                    <button id="check">Check</button>
+                </div>
+
+                <div>
+                    <h1 id="result"></h1>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Черный прямоугольник с таблицей результатов -->
+    <div class="table-background">
+        <table id="resultsTable">
+            <thead>
+            <tr>
+                <th><h2>X</h2></th>
+                <th><h2>Y</h2></th>
+                <th><h2>R</h2></th>
+                <th><h2>Answer</h2></th>
+                <th><h2>ExecutionTime</h2></th>
+                <th><h2>ServerTime</h2></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Здесь будут строки с результатами -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script charset="utf-8" type="text/javascript">
+    document.getElementById("check").onclick = function () {
+        let x = document.getElementById("inputX").value;
+
+        let y = 0;
+        const radios = document.getElementsByName("radioY");
+        for (const radio of radios) {
+            if (radio.checked) {
+                y = radio.value;
+                break;
+            }
+        }
+
+        let r = document.getElementById("selectR").value;
+        const resultElement = document.getElementById("result");
+
+        if (!checkX(x)) {
+            document.getElementById("result").innerText = "Uncorrected X";
+            resultElement.style.visibility = 'visible';
+            return;
+        } else {
+            document.getElementById("result").innerText = "";
+            resultElement.style.visibility = 'hidden';
+            sentRequest(x, y, r);
+            return;
+        }
+    };
+
+    function checkX(x) {
+        if (x === "" || x === null || x === undefined) {
+            return false;
+        }
+
+        let parsedX = parseFloat(x);
+        if (isNaN(parsedX)) {
+            return false;
+        }
+
+        const MAX_FLOAT = Number.MAX_VALUE; // Максимальное значение для float
+        const MIN_FLOAT = -Number.MAX_VALUE; // Минимальное значение для float
+
+        if (parsedX > MAX_FLOAT || parsedX < MIN_FLOAT) {
+            return false;
+        }
+
+        return parsedX > -3 && parsedX < 3;
+    }
+
+    function sentRequest(x, y, r) {
+         const data = `x=${x}&y=${y}&r=${r}`;
+    fetch('./fcgi-bin/web1.jar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                addRowWithData(x, y, r, data);
+
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+
+    }
+
+        // Функция для сохранения результата в localStorage
+    function saveResult(x, y, r, answer, executionTime, serverTime) {
+        // Получаем текущие результаты из localStorage или создаем новый массив
+        let results;
+
+        if (localStorage.getItem('results') == undefined || localStorage.getItem('results') == "") {
+            results = []
+        } else {
+            results = JSON.parse(localStorage.getItem('results')) || [];
+        }
+
+        // Проверяем, существует ли уже результат с такими x и y
+        const index = results.findIndex(result => result.x === x && result.y === y);
+
+        if (index !== -1) {
+            // Если результат найден, обновляем его
+            results[index] = { x, y, r, answer, executionTime, serverTime};
+        } else {
+            // Если результат не найден, добавляем новый
+            results.push({ x, y, r, answer, executionTime, serverTime});
+        }
+
+        // Сохраняем обновленные результаты обратно в localStorage
+        localStorage.setItem('results', JSON.stringify(results));
+    }
+
+    function loadResult() {
+        // Получение сохраненных результатов из сессии (JSON-строка)
+        let results = JSON.parse(localStorage.getItem('results')) || [];
+
+        // Добавление результатов в таблицу
+        results.forEach(result => {
+            addRow(result.x, result.y, result.r, result.answer, result.executionTime, result.serverTime)
+        });
+    }
+    loadResult();
+
+    function addRowWithData(x, y, r, data) {
+        const table = document.getElementById("resultsTable");
+        const newRow = table.insertRow();
+
+        const xCell = newRow.insertCell(0);
+        const yCell = newRow.insertCell(1);
+        const rCell = newRow.insertCell(2);
+        const answerCell = newRow.insertCell(3);
+        const executionTimeCell = newRow.insertCell(4);
+        const serverTimeCell = newRow.insertCell(5);
+
+        xCell.innerText = x;
+        yCell.innerText = y;
+        rCell.innerText = r;
+
+        const jsonResult = JSON.parse(data);
+
+        answerCell.innerText = jsonResult.isHit;
+        executionTimeCell.innerText = jsonResult.executionTime;
+        serverTimeCell.innerText = jsonResult.serverTime;
+        saveResult(x, y, r, jsonResult.isHit, jsonResult.executionTime, jsonResult.serverTime);
+    }
+
+    function addRow(x, y, r, answer, executionTime, serverTime) {
+        const table = document.getElementById("resultsTable");
+        const newRow = table.insertRow();
+
+        const xCell = newRow.insertCell(0);
+        const yCell = newRow.insertCell(1);
+        const rCell = newRow.insertCell(2);
+        const answerCell = newRow.insertCell(3);
+        const executionTimeCell = newRow.insertCell(4);
+        const serverTimeCell = newRow.insertCell(5);
+
+        xCell.innerText = x;
+        yCell.innerText = y;
+        rCell.innerText = r;
+
+        answerCell.innerText = answer;
+        executionTimeCell.innerText = executionTime;
+        serverTimeCell.innerText = serverTime;
+    }
+</script>
+</body>
+</html>
