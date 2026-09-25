@@ -1,0 +1,303 @@
+openapi: 3.0.4
+info:
+  title: Killer Service API
+  version: 1.0.0
+  description: REST API второго веб-сервиса для операций убийства драконов и создания команд. Спецификация содержит наглядные
+    примеры успешных и ошибочных HTTP-ответов.
+tags:
+- name: Killer
+  description: Операции сервиса убийц драконов
+paths:
+  /killer/dragon/{dragon-id}/kill:
+    post:
+      tags:
+      - Killer
+      summary: Убить указанного дракона
+      description: 'Выполняет операцию убийства дракона с указанным идентификатором посредством обращения к API первого сервиса.
+
+        '
+      operationId: killDragon
+      parameters:
+      - name: dragon-id
+        in: path
+        required: true
+        description: Уникальный идентификатор дракона
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '204':
+          description: Операция убийства дракона успешно выполнена. Ответ 204 не содержит тела.
+        '400':
+          description: Некорректный формат dragon-id
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 400 Bad Request
+                  value:
+                    type: about:blank
+                    title: Bad Request
+                    status: 400
+                    detail: Параметр dragon-id должен быть целым числом.
+                    instance: /killer/dragon/abc/kill
+        '404':
+          description: Запрошенный API-ресурс не найден
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 404 Not Found
+                  value:
+                    type: about:blank
+                    title: Not Found
+                    status: 404
+                    detail: Запрошенный API-ресурс не существует.
+                    instance: /killer/dragon/999/kill
+        '405':
+          description: Для ресурса использован неподдерживаемый HTTP-метод
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 405 Method Not Allowed
+                  value:
+                    type: about:blank
+                    title: Method Not Allowed
+                    status: 405
+                    detail: Для данного API-ресурса использован неподдерживаемый HTTP-метод.
+                    instance: /killer/dragon/999/kill
+        '422':
+          description: dragon-id нарушает ограничения
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 422 Unprocessable Content
+                  value:
+                    type: about:blank
+                    title: Unprocessable Content
+                    status: 422
+                    detail: Параметр dragon-id должен быть больше 0.
+                    instance: /killer/dragon/0/kill
+        '500':
+          description: Внутренняя ошибка Killer Service
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 500 Internal Server Error
+                  value:
+                    type: about:blank
+                    title: Internal Server Error
+                    status: 500
+                    detail: Произошла непредвиденная ошибка Killer Service.
+                    instance: /killer/dragon/1/kill
+        '502':
+          description: Ошибка при обращении к первому сервису
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 502 Bad Gateway
+                  value:
+                    type: about:blank
+                    title: Bad Gateway
+                    status: 502
+                    detail: Killer Service не получил корректный ответ от Dragon Collection Service.
+                    instance: /killer/dragon/1/kill
+  /killer/teams/create/{team-id}/{team-name}/{team-size}/{start-cave-id}:
+    post:
+      tags:
+      - Killer
+      summary: Создать команду убийц драконов
+      description: 'Создаёт новую команду убийц драконов с указанными параметрами и сохраняет её в базе данных. Все параметры
+        операции передаются в URL запроса.
+
+        '
+      operationId: createKillerTeam
+      parameters:
+      - name: team-id
+        in: path
+        required: true
+        description: Идентификатор команды
+        schema:
+          type: integer
+          format: int64
+      - name: team-name
+        in: path
+        required: true
+        description: Название команды
+        schema:
+          type: string
+      - name: team-size
+        in: path
+        required: true
+        description: Размер команды
+        schema:
+          type: integer
+      - name: start-cave-id
+        in: path
+        required: true
+        description: Идентификатор стартовой пещеры
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '201':
+          description: Команда успешно создана и сохранена в базе данных
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/KillerTeam'
+              example:
+                id: 2
+                name: DragonSlayers
+                size: 5
+                startCaveId: 10
+        '400':
+          description: Один или несколько path-параметров имеют неверный формат
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 400 Bad Request
+                  value:
+                    type: about:blank
+                    title: Bad Request
+                    status: 400
+                    detail: team-id, team-size и start-cave-id должны иметь целочисленный формат.
+                    instance: /killer/teams/create/abc/Team/5/10
+        '404':
+          description: Запрошенный API-ресурс не найден
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 404 Not Found
+                  value:
+                    type: about:blank
+                    title: Not Found
+                    status: 404
+                    detail: Запрошенный API-ресурс не существует.
+                    instance: /killer/teams/create/1/DragonSlayers/5/10
+        '405':
+          description: Для ресурса использован неподдерживаемый HTTP-метод
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 405 Method Not Allowed
+                  value:
+                    type: about:blank
+                    title: Method Not Allowed
+                    status: 405
+                    detail: Для данного API-ресурса использован неподдерживаемый HTTP-метод.
+                    instance: /killer/teams/create/1/DragonSlayers/5/10
+        '409':
+          description: Команда с указанным team-id уже существует
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 409 Conflict
+                  value:
+                    type: about:blank
+                    title: Conflict
+                    status: 409
+                    detail: Команда с указанным team-id уже существует.
+                    instance: /killer/teams/create/1/DragonSlayers/5/10
+        '500':
+          description: Внутренняя ошибка Killer Service
+          content:
+            application/problem+xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                error:
+                  summary: 500 Internal Server Error
+                  value:
+                    type: about:blank
+                    title: Internal Server Error
+                    status: 500
+                    detail: Не удалось сохранить команду из-за внутренней ошибки сервера.
+                    instance: /killer/teams/create/2/DragonSlayers/5/10
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      description: Стандартное представление ошибки HTTP API (Problem Details).
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: URI типа проблемы; about:blank используется для стандартной HTTP-ошибки.
+        title:
+          type: string
+          description: Краткое название класса ошибки.
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: HTTP-код ответа.
+        detail:
+          type: string
+          description: Описание конкретной ошибки.
+        instance:
+          type: string
+          format: uri-reference
+          description: URI ресурса/операции, с которой связан пример ошибки.
+      xml:
+        name: problem
+        namespace: urn:ietf:rfc:7807
+    KillerTeam:
+      type: object
+      required:
+      - id
+      - name
+      - size
+      - startCaveId
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        size:
+          type: integer
+        startCaveId:
+          type: integer
+          format: int64
+      xml:
+        name: team
+servers:
+- url: https://se.ifmo.ru/~s412958/soa-lab1
+  description: Демонстрационный адрес API для Swagger UI

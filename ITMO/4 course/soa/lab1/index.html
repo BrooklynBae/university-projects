@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Dragon Services API</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+</head>
+<body>
+<div id="swagger-ui"></div>
+
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
+<script>
+window.onload = function () {
+    const documented404 = [
+        {
+                "method": "GET",
+                "pattern": "^/dragons$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons"
+                }
+        },
+        {
+                "method": "POST",
+                "pattern": "^/dragons$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons"
+                }
+        },
+        {
+                "method": "GET",
+                "pattern": "^/dragons/[^/]+$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/999"
+                }
+        },
+        {
+                "method": "PUT",
+                "pattern": "^/dragons/[^/]+$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/999"
+                }
+        },
+        {
+                "method": "DELETE",
+                "pattern": "^/dragons/[^/]+$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/999"
+                }
+        },
+        {
+                "method": "GET",
+                "pattern": "^/dragons/name/starts\\-with$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/name/starts-with"
+                }
+        },
+        {
+                "method": "GET",
+                "pattern": "^/dragons/killer/less\\-than/count$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/killer/less-than/count"
+                }
+        },
+        {
+                "method": "GET",
+                "pattern": "^/dragons/killer/greater\\-than$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/dragons/killer/greater-than"
+                }
+        },
+        {
+                "method": "POST",
+                "pattern": "^/killer/dragon/[^/]+/kill$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/killer/dragon/999/kill"
+                }
+        },
+        {
+                "method": "POST",
+                "pattern": "^/killer/teams/create/[^/]+/[^/]+/[^/]+/[^/]+$",
+                "value": {
+                        "type": "about:blank",
+                        "title": "Not Found",
+                        "status": 404,
+                        "detail": "Запрошенный API-ресурс не существует.",
+                        "instance": "/killer/teams/create/1/DragonSlayers/5/10"
+                }
+        }
+];
+
+    let lastRequest = null;
+
+    function escapeXml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&apos;");
+    }
+
+    function problemToXml(problem) {
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<problem xmlns="urn:ietf:rfc:7807">
+    <type>${escapeXml(problem.type)}</type>
+    <title>${escapeXml(problem.title)}</title>
+    <status>${escapeXml(problem.status)}</status>
+    <detail>${escapeXml(problem.detail)}</detail>
+    <instance>${escapeXml(problem.instance)}</instance>
+</problem>`;
+    }
+
+    function apiPathFromUrl(url) {
+        try {
+            const parsed = new URL(url, window.location.href);
+            let path = parsed.pathname;
+
+            const base = "/~s412958/soa-lab1";
+            if (path.startsWith(base)) {
+                path = path.substring(base.length);
+            }
+
+            if (!path.startsWith("/")) path = "/" + path;
+            return path || "/";
+        } catch (_) {
+            return "/";
+        }
+    }
+
+    function findDocumented404(method, url) {
+        const apiPath = apiPathFromUrl(url);
+        const upperMethod = String(method || "GET").toUpperCase();
+
+        for (const item of documented404) {
+            if (item.method === upperMethod && new RegExp(item.pattern).test(apiPath)) {
+                return item.value;
+            }
+        }
+
+        return {
+            type: "about:blank",
+            title: "Not Found",
+            status: 404,
+            detail: "Запрошенный API-ресурс не существует.",
+            instance: apiPath
+        };
+    }
+
+    const ui = SwaggerUIBundle({
+        urls: [
+            { url: "./dragon-service.yaml", name: "Dragon Collection API" },
+            { url: "./killer-service.yaml", name: "Killer Service API" }
+        ],
+
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        displayRequestDuration: true,
+        defaultModelRendering: "example",
+        docExpansion: "list",
+        filter: true,
+
+        // Сохраняем конкретную операцию, которую пользователь запустил через Execute.
+        requestInterceptor: (request) => {
+            lastRequest = {
+                method: request.method,
+                url: request.url
+            };
+            return request;
+        },
+
+        /*
+         * На Helios нет backend этой лабораторной: статический сервер для отсутствующего
+         * маршрута обычно возвращает HTML 404, а для POST/PUT/DELETE может вернуть HTML 405.
+         * Для демонстрации OpenAPI оба этих инфраструктурных ответа нормализуются в тот
+         * 404 Problem Details, который буквально описан в YAML для запущенной операции.
+         * Благодаря этому блок Server response и пример 404 в Responses совпадают.
+         */
+        responseInterceptor: (response) => {
+            try {
+                const headers = response.headers || {};
+                const contentType = String(
+                    headers["content-type"] || headers["Content-Type"] || ""
+                ).toLowerCase();
+
+                const req = lastRequest || {
+                    method: response.request?.method || "GET",
+                    url: response.url || response.request?.url || ""
+                };
+
+                const isStatic404or405 =
+                    (response.status === 404 || response.status === 405) &&
+                    !contentType.includes("application/problem+xml");
+
+                if (isStatic404or405) {
+                    const documented = findDocumented404(req.method, req.url);
+                    const xml = problemToXml(documented);
+
+                    response.status = 404;
+                    response.statusText = "Not Found";
+                    response.ok = false;
+                    response.text = xml;
+                    response.body = xml;
+
+                    // Показываем только релевантные заголовки, а не HTML/служебные
+                    // заголовки страницы кафедры.
+                    response.headers = {
+                        "content-type": "application/problem+xml; charset=UTF-8"
+                    };
+                }
+            } catch (e) {
+                console.warn("Swagger response interceptor error:", e);
+            }
+
+            return response;
+        },
+
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout"
+    });
+
+    window.ui = ui;
+};
+</script>
+</body>
+</html>
