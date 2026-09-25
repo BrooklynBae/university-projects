@@ -121,11 +121,10 @@ window.onload = function () {
                         "title": "Not Found",
                         "status": 404,
                         "detail": "Запрошенный API-ресурс не существует.",
-                        "instance": "/killer/teams/create/1/DragonSlayers/5/10"
+                        "instance": "/killer/teams/create/2/DragonSlayers/5/10"
                 }
         }
 ];
-
     let lastRequest = null;
 
     function escapeXml(value) {
@@ -152,12 +151,8 @@ window.onload = function () {
         try {
             const parsed = new URL(url, window.location.href);
             let path = parsed.pathname;
-
             const base = "/~s412958/soa-lab1";
-            if (path.startsWith(base)) {
-                path = path.substring(base.length);
-            }
-
+            if (path.startsWith(base)) path = path.substring(base.length);
             if (!path.startsWith("/")) path = "/" + path;
             return path || "/";
         } catch (_) {
@@ -189,7 +184,6 @@ window.onload = function () {
             { url: "./dragon-service.yaml", name: "Dragon Collection API" },
             { url: "./killer-service.yaml", name: "Killer Service API" }
         ],
-
         dom_id: "#swagger-ui",
         deepLinking: true,
         displayRequestDuration: true,
@@ -197,21 +191,17 @@ window.onload = function () {
         docExpansion: "list",
         filter: true,
 
-        // Сохраняем конкретную операцию, которую пользователь запустил через Execute.
         requestInterceptor: (request) => {
-            lastRequest = {
-                method: request.method,
-                url: request.url
-            };
+            lastRequest = { method: request.method, url: request.url };
             return request;
         },
 
         /*
-         * На Helios нет backend этой лабораторной: статический сервер для отсутствующего
-         * маршрута обычно возвращает HTML 404, а для POST/PUT/DELETE может вернуть HTML 405.
-         * Для демонстрации OpenAPI оба этих инфраструктурных ответа нормализуются в тот
-         * 404 Problem Details, который буквально описан в YAML для запущенной операции.
-         * Благодаря этому блок Server response и пример 404 в Responses совпадают.
+         * Helios здесь обслуживает документацию, а не Java backend.
+         * Поэтому его HTML 404/405 при Execute преобразуется только для отображения
+         * в тот 404 Problem Details, который описан в YAML для выбранной операции.
+         * Остальные 400/406/409/413/415/422/500/502/503/504 показаны как документированные
+         * примеры контракта и требуют реального backend для фактического воспроизведения.
          */
         responseInterceptor: (response) => {
             try {
@@ -225,11 +215,11 @@ window.onload = function () {
                     url: response.url || response.request?.url || ""
                 };
 
-                const isStatic404or405 =
+                const isStaticHtmlError =
                     (response.status === 404 || response.status === 405) &&
                     !contentType.includes("application/problem+xml");
 
-                if (isStatic404or405) {
+                if (isStaticHtmlError) {
                     const documented = findDocumented404(req.method, req.url);
                     const xml = problemToXml(documented);
 
@@ -238,9 +228,6 @@ window.onload = function () {
                     response.ok = false;
                     response.text = xml;
                     response.body = xml;
-
-                    // Показываем только релевантные заголовки, а не HTML/служебные
-                    // заголовки страницы кафедры.
                     response.headers = {
                         "content-type": "application/problem+xml; charset=UTF-8"
                     };
@@ -248,7 +235,6 @@ window.onload = function () {
             } catch (e) {
                 console.warn("Swagger response interceptor error:", e);
             }
-
             return response;
         },
 
